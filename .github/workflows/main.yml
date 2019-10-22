@@ -1,0 +1,124 @@
+####################################
+# CONFIGURATION
+####################################
+# Add the following variables to github secrets
+#   DOCKER_REGISTRY=""
+#   DOCKER_NAMESPACE="riccardoblb"
+#   DOCKER_REGISTRY_USER="riccardoblb"
+#   DOCKER_REGISTRY_KEY="...."
+####################################
+name: Build Environments
+on:
+  push:
+  schedule:
+  - cron: 0 0 1 * *
+
+jobs:
+
+  Base:
+    name: Build and Deploy base image
+    runs-on: ubuntu-18.04     
+      
+    steps:    
+      - name: Clone the repo
+        uses: actions/checkout@v1     
+        with:
+          fetch-depth: 1
+          
+      - name: build
+        run: | 
+          baseName="buildenvs"
+          version="base"
+          bash ./make.sh build "$baseName" "$version" "${{ secrets.DOCKER_NAMESPACE }}"
+          if [ "$GITHUB_REF" = "refs/heads/master" ]; then bash ./make.sh deploy "$baseName" "$version" ${{ secrets.DOCKER_NAMESPACE }} ${{ secrets.DOCKER_REGISTRY_USER }} ${{ secrets.DOCKER_REGISTRY_KEY }} ${{ secrets.DOCKER_REGISTRY }}; fi
+
+  Java:
+    needs: [Base]
+    name: Build and Deploy Java env
+    runs-on: ubuntu-18.04     
+         
+    steps:    
+      - name: Clone the repo
+        uses: actions/checkout@v1     
+        with:
+          fetch-depth: 1
+
+      - name: build
+        run: |  
+          baseName="buildenvs"
+          version="java"
+          bash ./make.sh build "$baseName" "$version" "${{ secrets.DOCKER_NAMESPACE }}"
+          if [ "$GITHUB_REF" = "refs/heads/master" ]; then bash ./make.sh deploy "$baseName" "$version" ${{ secrets.DOCKER_NAMESPACE }} ${{ secrets.DOCKER_REGISTRY_USER }} ${{ secrets.DOCKER_REGISTRY_KEY }} ${{ secrets.DOCKER_REGISTRY }}; fi
+
+
+  JavaCross:
+    needs: [Java]
+    name: Build and Deploy JavaCross env
+    runs-on: ubuntu-18.04     
+         
+    steps:    
+      - name: Clone the repo
+        uses: actions/checkout@v1     
+        with:
+          fetch-depth: 1
+
+      - name: build
+        run: |  
+          baseName="buildenvs"
+          version="javacross"
+          bash ./make.sh build "$baseName" "$version" "${{ secrets.DOCKER_NAMESPACE }}"
+          if [ "$GITHUB_REF" = "refs/heads/master" ]; then bash ./make.sh deploy "$baseName" "$version" ${{ secrets.DOCKER_NAMESPACE }} ${{ secrets.DOCKER_REGISTRY_USER }} ${{ secrets.DOCKER_REGISTRY_KEY }} ${{ secrets.DOCKER_REGISTRY }}; fi
+
+  JavaCrossArm:
+    needs: [Java]
+    name: Build and Deploy JavaCrossArm env
+    runs-on: ubuntu-18.04     
+         
+    steps:    
+      - name: Clone the repo
+        uses: actions/checkout@v1     
+        with:
+          fetch-depth: 1
+
+      - name: build
+        run: |  
+          baseName="buildenvs"
+          version="javacross-linuxarm"
+          bash ./make.sh build "$baseName" "$version" "${{ secrets.DOCKER_NAMESPACE }}"
+          if [ "$GITHUB_REF" = "refs/heads/master" ]; then bash ./make.sh deploy "$baseName" "$version" ${{ secrets.DOCKER_NAMESPACE }} ${{ secrets.DOCKER_REGISTRY_USER }} ${{ secrets.DOCKER_REGISTRY_KEY }} ${{ secrets.DOCKER_REGISTRY }}; fi
+
+  Hugo:
+    needs: [Base]
+    name: Build and Deploy Hugo env
+    runs-on: ubuntu-18.04     
+         
+    steps:    
+      - name: Clone the repo
+        uses: actions/checkout@v1     
+        with:
+          fetch-depth: 1
+
+      - name: build
+        run: |  
+          baseName="buildenvs"
+          version="hugo"
+          bash ./make.sh build "$baseName" "$version" "${{ secrets.DOCKER_NAMESPACE }}"
+          if [ "$GITHUB_REF" = "refs/heads/master" ]; then bash ./make.sh deploy "$baseName" "$version" ${{ secrets.DOCKER_NAMESPACE }} ${{ secrets.DOCKER_REGISTRY_USER }} ${{ secrets.DOCKER_REGISTRY_KEY }} ${{ secrets.DOCKER_REGISTRY }}; fi
+  
+  Android:
+    needs: [Java]
+    name: Build and Deploy Android env
+    runs-on: ubuntu-18.04     
+         
+    steps:    
+      - name: Clone the repo
+        uses: actions/checkout@v1     
+        with:
+          fetch-depth: 1
+
+      - name: build
+        run: |  
+          baseName="buildenvs"
+          version="android"
+          bash ./make.sh build "$baseName" "$version" "${{ secrets.DOCKER_NAMESPACE }}"
+          if [ "$GITHUB_REF" = "refs/heads/master" ]; then bash ./make.sh deploy "$baseName" "$version" ${{ secrets.DOCKER_NAMESPACE }} ${{ secrets.DOCKER_REGISTRY_USER }} ${{ secrets.DOCKER_REGISTRY_KEY }} ${{ secrets.DOCKER_REGISTRY }}; fi
