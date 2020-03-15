@@ -122,3 +122,24 @@ jobs:
           version="android"
           bash ./make.sh build "$baseName" "$version" "${{ secrets.DOCKER_NAMESPACE }}"
           if [ "$GITHUB_REF" = "refs/heads/master" ]; then bash ./make.sh deploy "$baseName" "$version" ${{ secrets.DOCKER_NAMESPACE }} ${{ secrets.DOCKER_REGISTRY_USER }} ${{ secrets.DOCKER_REGISTRY_KEY }} ${{ secrets.DOCKER_REGISTRY }}; fi
+          
+          
+  JavaGl:
+    needs: [Java]
+    name: Build and Deploy Java GL env
+    runs-on: ubuntu-18.04     
+         
+    steps:    
+      - name: Clone the repo
+        uses: actions/checkout@v1     
+        with:
+          fetch-depth: 1
+
+      - name: build
+        run: |  
+          baseName="buildenvs"
+          version="javagl"
+          bash ./make.sh build "$baseName" "$version" "${{ secrets.DOCKER_NAMESPACE }}"
+          if [ "$GITHUB_REF" = "refs/heads/master" ]; then bash ./make.sh deploy "$baseName" "$version" ${{ secrets.DOCKER_NAMESPACE }} ${{ secrets.DOCKER_REGISTRY_USER }} ${{ secrets.DOCKER_REGISTRY_KEY }} ${{ secrets.DOCKER_REGISTRY }}; fi
+
+
