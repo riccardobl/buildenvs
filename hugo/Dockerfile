@@ -21,7 +21,6 @@ USER linuxbrew
 
 RUN  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-USER root
 
 ENV HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew"
 ENV HOMEBREW_CELLAR="/home/linuxbrew/.linuxbrew/Cellar"
@@ -35,8 +34,9 @@ RUN  echo '# Set PATH, MANPATH, etc., for Homebrew.' >> /home/linuxbrew/.profile
     echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/linuxbrew/.profile \
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
-
 RUN brew install hugo        
+
+USER root
 
 RUN apt-get install -y \
 curl -sL https://deb.nodesource.com/setup_16.x -o /tmp/nodesource_setup.sh \
@@ -45,3 +45,5 @@ nodejs \
 npm \
 && node -v \
 && apt-get clean 
+
+USER linuxbrew
