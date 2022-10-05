@@ -32,6 +32,10 @@ ENV INFOPATH="/home/linuxbrew/.linuxbrew/share/info:$INFOPATH"
 
 RUN brew install hugo        
 
+RUN  echo '# Set PATH, MANPATH, etc., for Homebrew.' >> /home/linuxbrew/.profile \
+    echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/linuxbrew/.profile \
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
 RUN apt-get install -y \
 curl -sL https://deb.nodesource.com/setup_16.x -o /tmp/nodesource_setup.sh \
 bash /tmp/nodesource_setup.sh \
