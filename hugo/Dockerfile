@@ -33,6 +33,9 @@ ENV INFOPATH="/home/linuxbrew/.linuxbrew/share/info:$INFOPATH"
 RUN brew install hugo        
 
 RUN apt-get install -y \
+curl -sL https://deb.nodesource.com/setup_16.x -o /tmp/nodesource_setup.sh \
+bash /tmp/nodesource_setup.sh \
 nodejs \
 npm \
+&& node -v \
 && apt-get clean 
